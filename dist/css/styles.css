@@ -28,7 +28,17 @@ body {
   width: 100%;
   background-color: #015cae;
   opacity: 0.333;
-  padding-bottom: 30%;
+  height: 25em;
+}
+@media (max-width: 768px) {
+  .cds-filter {
+    height: 25em;
+  }
+}
+@media (max-width: 480px) {
+  .cds-filter {
+    height: 25em;
+  }
 }
 .cds-filter.cds-filter-map {
   top: 0;
@@ -36,7 +46,17 @@ body {
 }
 .cds-filter.cds-filter-controls {
   padding-top: 5%;
-  padding-bottom: 30%;
+  height: 15em;
+}
+@media (max-width: 768px) {
+  .cds-filter.cds-filter-controls {
+    height: 18em;
+  }
+}
+@media (max-width: 480px) {
+  .cds-filter.cds-filter-controls {
+    height: 18em;
+  }
 }
 .formatted-address {
   border: 1px solid #00be8b;
@@ -192,13 +212,23 @@ select {
   padding: 4px 11px;
 }
 #contact-data-services-map {
-  padding-bottom: 30%;
+  height: 25em;
   background-size: 100%;
   background-color: transparent;
   background-image: url('../images/default-map.gif');
   background-repeat: no-repeat;
   background-position: center;
   transition: background-size 600ms ease-in;
+}
+@media (max-width: 768px) {
+  #contact-data-services-map {
+    height: 25em;
+  }
+}
+@media (max-width: 480px) {
+  #contact-data-services-map {
+    height: 25em;
+  }
 }
 #contact-data-services-map.contact-data-services-map-loaded {
   background-size: 1000%;
@@ -210,25 +240,50 @@ select {
   width: 50%;
   top: 0;
   left: 25%;
-  padding-top: 5em;
+  padding-top: 4em;
+}
+@media (max-width: 768px) {
+  #contact-data-services-controls {
+    width: 70%;
+    left: 15%;
+    padding-top: 3em;
+  }
+}
+@media (max-width: 480px) {
+  #contact-data-services-controls {
+    width: 80%;
+    left: 10%;
+    padding-top: 1.5em;
+  }
 }
 #contact-data-services-controls .controls-container {
   padding: 2em;
+}
+@media (max-width: 480px) {
+  #contact-data-services-controls .controls-container {
+    padding: 1em;
+  }
 }
 #contact-data-services-controls .controls-container .header {
   position: relative;
   color: #ffffff;
   text-align: center;
 }
-@media (max-width: 480px) {
-  #contact-data-services-controls .controls-container .header {
-    padding: 2.5em 5em;
-  }
-}
 #contact-data-services-controls .controls-container .header h1 {
   font-family: "OpenSansLight", Arial, sans-serif;
-  font-size: 3em;
+  font-size: 2.5em;
   font-weight: 300;
   margin: 0;
   margin-bottom: 0.5em;
+}
+@media (max-width: 768px) {
+  #contact-data-services-controls .controls-container .header h1 {
+    font-size: 2em;
+  }
+}
+@media (max-width: 480px) {
+  #contact-data-services-controls .controls-container .header h1 {
+    font-size: 2em;
+    margin-bottom: 1em;
+  }
 }

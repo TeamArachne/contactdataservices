@@ -4,8 +4,15 @@
   width: 100%;
   background-color: @blue;
   opacity: 0.333;
-  padding-bottom: @container-height;
+  height: @container-height-md;
 
+  @media (max-width: @sm) {
+    height: @container-height-sm;
+  }
+
+  @media (max-width: @xs) {
+    height: @container-height-xs;
+  }
 
   &.cds-filter-map {
     top: 0;
@@ -14,6 +21,14 @@
 
   &.cds-filter-controls {
     padding-top: 5%;
-    padding-bottom: @container-height;
+    height: @controls-height-md;
+
+    @media (max-width: @sm) {
+      height: @controls-height-sm;
+    }
+
+    @media (max-width: @xs) {
+      height: @controls-height-xs;
+    }
   }
 }
