@@ -2,33 +2,56 @@
 <html>
 	<head>
 		<title>Contact Data Services - sample code</title>
-		<link rel="stylesheet" type="text/css" href="src/css/styles.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" type="text/css" href="dist/css/styles.css">
 	</head>
 	<body>
-		<div class="filter-primary overlay-dotted">
-			<h1>Contact Data Services</h1>
+
+		<div id="contact-data-services-container">
+
+		<div id="contact-data-services-map"></div>		
+		<div class="cds-filter cds-filter-map"></div>
+
+		<div id="contact-data-services-controls">
+			<div class="cds-filter cds-filter-controls"></div>
+
+			<div class="controls-container">
+
+				<div class="header">
+					<h1>Contact Data Services</h1>
+				</div>
+
+				<form>
+					<div class="loader loader-overlay hidden">
+		            	<div class="spinner"></div>
+		        	</div>
+
+					<label for="country" class="toggle">Country</label>
+					<select name="country" class="toggle">
+						<option value="">Please select</option>
+						<option value="aus">Australia</option>
+						<option value="fra">France</option>
+						<option value="nzl">New Zealand</option>
+						<option value="gbr" selected>United Kingdom</option>
+						<option value="usa">United States</option>
+					</select>
+
+					<label for="address-input" class="toggle">Address</label>
+					<input type="text" name="address-input" class="toggle">
+				</form>
+			</div>
+
 		</div>
 
-		<form>
-			<div class="loader loader-overlay hidden">
-            	<div class="spinner"></div>
-        	</div>
+		<!-- Quick hack to pre-load stamp images -->
+		<div style="display: none;">
+			<div class="stamp stamp-gb"></div>
+			<div class="stamp stamp-us"></div>
+		</div>
 
-			<label for="country" class="toggle">Country</label>
-			<select name="country" class="toggle">
-				<option value="">Please select</option>
-				<option value="aus">Australia</option>
-				<option value="fra">France</option>
-				<option value="nzl">New Zealand</option>
-				<option value="gbr" selected>United Kingdom</option>
-				<option value="usa">United States</option>
-			</select>
+		</div>
 
-			<label for="address-input" class="toggle">Address</label>
-			<input type="text" name="address-input" class="toggle">
-		</form>
-
-		<script src="src/js/contact-data-services.js"></script>
+		<script src="dist/js/contact-data-services.js"></script>
 		<script>
 			// Set the custom options
 			var options = {
@@ -56,6 +79,38 @@
 
 				// Hide the spinner
 				document.querySelector(".loader").classList.add("hidden");
+
+				// After formatting...
+				setTimeout(function() {
+					// Add a stamp
+					var stamp = document.createElement("div");
+					var envelope = document.querySelector(".formatted-address");
+					stamp.classList.add("stamp");
+					envelope.appendChild(stamp);
+
+					// Detect country
+					var addressLines = document.querySelectorAll(".toggle");
+					var country = addressLines[addressLines.length - 1].textContent;
+
+					switch(country) {
+						case "UNITED KINGDOM":
+							stamp.classList.add("stamp-gb");
+							break;
+						case "UNITED STATES OF AMERICA":
+							stamp.classList.add("stamp-us");
+							break;
+					}
+
+					// Add search again link
+					var retry = document.createElement("a");
+					retry.setAttribute("href", "#");
+					retry.classList.add("search-again");
+					retry.textContent = "Search again";
+					retry.addEventListener("click", function(){ window.location.reload() }, false);
+					envelope.appendChild(retry);
+
+				}, 100);
+
 			});
 		</script>
 	</body>

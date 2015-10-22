@@ -1,0 +1,97 @@
+
+.formatted-address {
+  background: @white;
+  border: 1px solid @gray-light;
+  border-radius: 4px;
+  position: absolute;
+  top: 3.5em;
+  left: -0.5em;
+  right: -0.5em;
+  height: 15em;
+  padding: 2em;
+  padding-right: 12em;
+
+  .toggle {
+    line-height: 1.5em;
+    font-size: 1.5em;
+    color: @gray-dark;
+    transform: rotate(-1deg);
+    padding-left: 1em;
+    padding-top: 0.1em;
+  }
+
+  .edit-address-link {
+    text-decoration: none;
+    position: absolute;
+    bottom: 2em;
+    left: 4.5em;
+  }
+
+  .search-again {
+    text-decoration: none;
+    position: absolute;
+    bottom: 2em;
+    right: 3em;
+  }
+
+  .stamp {
+    position: absolute;
+    background-size: 100%;
+    transform: rotate(4deg);
+
+    &.stamp-gb {
+      background-image: url("http://i.dailymail.co.uk/i/pix/2013/10/15/article-2462071-02AB80E90000044D-963_306x361.jpg");
+      width: 5em;
+      height: 6em;
+      right: 1.5em;
+      top: 1.5em;
+    }
+
+    &.stamp-us {
+      background-image: url("http://www.adirectory.us/pix/rare-stamps-400.jpg");
+      width: 8em;
+      height: 5.5em;
+      right: 2em;
+      top: 2em;
+    }
+  }
+}
+
+.formatted-address div {
+  font-weight: bold;
+}
+
+.formatted-address a {
+  font-size: 12px;
+}
+
+.formatted-address h3 {
+  display: none;
+  color: @gray; 
+  font-size: 2em;
+  font-family: "OpenSansLight",Helvetica,Arial,sans-serif;  
+  line-height: 1.1;
+  margin: 0 auto 10px;
+}
+
+.formatted-address input {
+  width: 60%;
+}
+
+.formatted-address label {
+  display: inline-block;
+  width: 20%;
+  text-align: right;
+  padding-right: 10%;
+}
+
+.address-line-input {
+  label {
+    color: @gray-dark;
+  }
+
+  input {
+    display: inline-block;
+    width: 70% !important;
+  }
+}
