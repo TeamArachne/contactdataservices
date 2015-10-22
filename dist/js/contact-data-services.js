@@ -292,17 +292,10 @@ ContactDataServices.address = function(options){
 			instance.input.parentNode.setAttribute("autocomplete", "off");
 			
 			// Get the postalCode from the geolocation
-			// Hardcode lat/long for testing
-			var object = {
-				"coords": {
-					"lat": 51.464055,
-					"lon": -0.160178
-					}
-				};
 			// Create a new request object from constructor
 			var missyEndpointRequest = new ContactDataServices.requestFactory();
 			// Make post request to get the postalCode from the lat/long
-			missyEndpointRequest.post(ContactDataServices.missyEndpoint.url, object, instance.storePostalCode);
+			missyEndpointRequest.post(ContactDataServices.missyEndpoint.url, ContactDataServices.coords, instance.storePostalCode);
 			
 			// Hardcode a fallback postal code if there's an error
 			missyEndpointRequest.currentRequest.onerror = function() {
@@ -467,7 +460,7 @@ ContactDataServices.address = function(options){
 			// Prepend an option for "use address entered"
 			instance.picklist.createUseAddressEntered();
 			
-			if(picklistItems.results.length > 0){	
+			if(picklistItems.results && picklistItems.results.length > 0){	
 				// Iterate over and show results
 				picklistItems.results.forEach(function(item){
 					// Create a new item/row in the picklist
