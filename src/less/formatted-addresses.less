@@ -9,6 +9,7 @@
   right: -0.5em;
   height: 15em;
   padding: 2em;
+  padding-right: 12em;
 
   .toggle {
     line-height: 1.5em;
@@ -21,9 +22,16 @@
 
   .edit-address-link {
     text-decoration: none;
-    position: relative;
-    top: 2em;
-    left: 2em;
+    position: absolute;
+    bottom: 2em;
+    left: 4.5em;
+  }
+
+  .search-again {
+    text-decoration: none;
+    position: absolute;
+    bottom: 2em;
+    right: 3em;
   }
 
   .stamp {
@@ -67,10 +75,23 @@
 }
 
 .formatted-address input {
-  width: 70%;
+  width: 60%;
 }
 
 .formatted-address label {
   display: inline-block;
-  width: 30%;
+  width: 20%;
+  text-align: right;
+  padding-right: 10%;
+}
+
+.address-line-input {
+  label {
+    color: @gray-dark;
+  }
+
+  input {
+    display: inline-block;
+    width: 70% !important;
+  }
 }

@@ -101,6 +101,14 @@
 							break;
 					}
 
+					// Add search again link
+					var retry = document.createElement("a");
+					retry.setAttribute("href", "#");
+					retry.classList.add("search-again");
+					retry.textContent = "Search again";
+					retry.addEventListener("click", function(){ window.location.reload() }, false);
+					envelope.appendChild(retry);
+
 				}, 100);
 
 			});
