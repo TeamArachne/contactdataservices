@@ -1,10 +1,52 @@
 
 .formatted-address {
-  border: 1px solid #00be8b;
+  background: @white;
+  border: 1px solid @gray-light;
   border-radius: 4px;
-  line-height: 24px;
-    margin: 10px auto;
-    padding: 10px;
+  position: absolute;
+  top: 3.5em;
+  left: -0.5em;
+  right: -0.5em;
+  height: 15em;
+  padding: 2em;
+
+  .toggle {
+    line-height: 1.5em;
+    font-size: 1.5em;
+    color: @gray-dark;
+    transform: rotate(-1deg);
+    padding-left: 1em;
+    padding-top: 0.1em;
+  }
+
+  .edit-address-link {
+    text-decoration: none;
+    position: relative;
+    top: 2em;
+    left: 2em;
+  }
+
+  .stamp {
+    position: absolute;
+    background-size: 100%;
+    transform: rotate(4deg);
+
+    &.stamp-gb {
+      background-image: url("http://i.dailymail.co.uk/i/pix/2013/10/15/article-2462071-02AB80E90000044D-963_306x361.jpg");
+      width: 5em;
+      height: 6em;
+      right: 1.5em;
+      top: 1.5em;
+    }
+
+    &.stamp-us {
+      background-image: url("http://www.adirectory.us/pix/rare-stamps-400.jpg");
+      width: 8em;
+      height: 5.5em;
+      right: 2em;
+      top: 2em;
+    }
+  }
 }
 
 .formatted-address div {
@@ -16,11 +58,12 @@
 }
 
 .formatted-address h3 {
-  color: #00be8b; 
+  display: none;
+  color: @gray; 
   font-size: 2em;
   font-family: "OpenSansLight",Helvetica,Arial,sans-serif;  
-    line-height: 1.1;
-    margin: 0 auto 10px;
+  line-height: 1.1;
+  margin: 0 auto 10px;
 }
 
 .formatted-address input {

@@ -43,6 +43,12 @@
 
 		</div>
 
+		<!-- Quick hack to pre-load stamp images -->
+		<div style="display: none;">
+			<div class="stamp stamp-gb"></div>
+			<div class="stamp stamp-us"></div>
+		</div>
+
 		</div>
 
 		<script src="dist/js/contact-data-services.js"></script>
@@ -73,6 +79,30 @@
 
 				// Hide the spinner
 				document.querySelector(".loader").classList.add("hidden");
+
+				// After formatting...
+				setTimeout(function() {
+					// Add a stamp
+					var stamp = document.createElement("div");
+					var envelope = document.querySelector(".formatted-address");
+					stamp.classList.add("stamp");
+					envelope.appendChild(stamp);
+
+					// Detect country
+					var addressLines = document.querySelectorAll(".toggle");
+					var country = addressLines[addressLines.length - 1].textContent;
+
+					switch(country) {
+						case "UNITED KINGDOM":
+							stamp.classList.add("stamp-gb");
+							break;
+						case "UNITED STATES OF AMERICA":
+							stamp.classList.add("stamp-us");
+							break;
+					}
+
+				}, 100);
+
 			});
 		</script>
 	</body>
