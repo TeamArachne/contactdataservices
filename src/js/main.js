@@ -145,12 +145,12 @@ ContactDataServices.address = function(options){
 
 			// Abort any outstanding requests
 			if(instance.request && instance.request.currentRequest){
-				//instance.request.currentRequest.abort();
+				instance.request.currentRequest.abort();
 			}
 
 			// Abort any outstanding missyEndpoint requests
 			if(instance.requestWithPostalCode && instance.requestWithPostalCode.currentRequest){
-				//instance.requestWithPostalCode.currentRequest.abort();
+				instance.requestWithPostalCode.currentRequest.abort();
 			}
 
 			// Create a new request object from constructor
