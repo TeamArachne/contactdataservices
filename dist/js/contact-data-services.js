@@ -79,9 +79,13 @@ ContactDataServices.urls = {
 	construct: {
 		address: {
 			// Construct the Search URL by appending query, country & token
-			search: function(instance){
+			search: function(instance, postalCode){
 				var url = ContactDataServices.urls.endpoint;
 				url += "?query=" + instance.currentSearchTerm;
+				// Append the postal code where possible
+				if(postalCode){
+					url += "," + postalCode;
+				}
 				url += "&country=" + instance.currentCountryCode;
 				url += "&take=" + (instance.maxSize || instance.picklist.maxSize);
 
@@ -185,6 +189,31 @@ ContactDataServices.address = function(options){
 			instance.input.setAttribute("placeholder", instance.placeholder);
 			// Disable autocomplete on the form
 			instance.input.parentNode.setAttribute("autocomplete", "off");
+			
+			// Get the postalCode from the geolocation
+			// Hardcode lat/long for testing
+			var object = {
+				"coords": {
+					"lat": 51.464055,
+					"lon": -0.160178
+					}
+				};
+			// Create a new request object from constructor
+			var missyEndpointRequest = new ContactDataServices.requestFactory();
+			// Make post request to get the postalCode from the lat/long
+			missyEndpointRequest.post(ContactDataServices.missyEndpoint.url, object, instance.storePostalCode);
+			
+			// Hardcode a fallback postal code if there's an error
+			missyEndpointRequest.currentRequest.onerror = function() {
+			  // There was a connection error of some sort
+			  console.log("ERROR");
+			  var fakeResponse = {
+				"iso": "GB",
+				"postalCode": "SW11",
+				"method": "Coords"
+				};
+				instance.postalCode = fakeResponse.postalCode;
+			};
 		}
 	};
 	
@@ -194,15 +223,26 @@ ContactDataServices.address = function(options){
 		instance.currentCountryCode = instance.countryList.value;
 
 		// Check is searching is permitted
-		if(instance.canSearch()){
+		if(instance.canSearch()){			
+
+			// Abort any outstanding requests
+			if(instance.request && instance.request.currentRequest){
+				//instance.request.currentRequest.abort();
+			}
+
+			// Abort any outstanding missyEndpoint requests
+			if(instance.requestWithPostalCode && instance.requestWithPostalCode.currentRequest){
+				//instance.requestWithPostalCode.currentRequest.abort();
+			}
+
 			// Create a new request object from constructor
 			var request = new ContactDataServices.requestFactory();
 			instance.request = request;
 
-			// Abort any outstanding requests
-			if(instance.request.currentRequest){
-				instance.request.currentRequest.abort();
-			}
+			// Create a new missyEndpoint request object from constructor
+			var requestWithPostalCode = new ContactDataServices.requestFactory();
+			instance.requestWithPostalCode = requestWithPostalCode;
+
 			// Construct the new Search URL
 			var url = ContactDataServices.urls.construct.address.search(instance);
 
@@ -219,11 +259,34 @@ ContactDataServices.address = function(options){
 			instance.searchSpinner.show();
 
 			// Initiate new Search request
-			instance.request.get(url, instance.picklist.show);
+			instance.request.get(url, instance.picklist.create);
+
+			// Initiate new Search request to the missyEndpoint
+			instance.searchWithPostalCode();
 		} else if(instance.lastSearchTerm !== instance.currentSearchTerm){
 			// Clear the picklist if the search term is cleared/empty
 			instance.picklist.hide();
 		}
+	};
+
+	instance.storePostalCode = function(response){		
+		if(response.postalCode){
+			instance.postalCode = response.postalCode;
+		}
+	};
+	instance.searchWithPostalCode = function(){			
+		if(instance.postalCode){
+			// Construct the new Search URL
+			var url = ContactDataServices.urls.construct.address.search(instance, instance.postalCode);
+			// Initiate new Search request
+			instance.requestWithPostalCode.get(url, instance.resultsWithPostalCode);
+		}
+	};
+
+	instance.resultsWithPostalCode = function(items){
+		// Store the picklist items from the postalCode search
+		instance.picklist.itemsWithPostalCode = items;
+		instance.picklist.merge();
 	};
 
 	instance.setCountryList = function(){
@@ -277,14 +340,20 @@ ContactDataServices.address = function(options){
 		size: 0,
 		// Set initial max size
 		maxSize: 25,
-		// Render a picklist of search results
-		show: function(items){
+		// Create a picklist of search results
+		create: function(items){
 			// Store the picklist items
 			instance.picklist.items = items.results;
 
 			// Update picklist size
 			instance.picklist.size = instance.picklist.items.length;
 
+			// Marge these into the picklist
+			instance.picklist.merge();
+		},
+		// Render a picklist of search results
+		show: function(items){
+			var picklistItems = items || instance.picklist.items;
 			// Get/Create picklist container element
 			instance.picklist.container = instance.picklist.container || instance.picklist.createList();
 
@@ -297,9 +366,9 @@ ContactDataServices.address = function(options){
 			// Prepend an option for "use address entered"
 			instance.picklist.createUseAddressEntered();
 			
-			if(instance.picklist.items.length > 0){	
+			if(picklistItems.results.length > 0){	
 				// Iterate over and show results
-				instance.picklist.items.forEach(function(item){
+				picklistItems.results.forEach(function(item){
 					// Create a new item/row in the picklist
 					var listItem = instance.picklist.createListItem(item);
 					instance.picklist.container.appendChild(listItem);
@@ -307,6 +376,40 @@ ContactDataServices.address = function(options){
 					// Listen for selection on this item
 					instance.picklist.listen(listItem);
 				});
+			}
+		},
+		// Merge picklist entries
+		merge: function(){
+			// Get existing picklist items
+			var existingItems = instance.picklist.items;
+
+			// Create a new array to hold the merged picklist (starting off with results list that has postal code appended)
+			var mergedPicklist = instance.picklist.itemsWithPostalCode || [];
+
+			// While we don't have 25, merge in some more items
+			if(existingItems){				
+				for(var i = 0; i < existingItems.length; i++){
+					if(mergedPicklist.results && mergedPicklist.results.length <= instance.picklist.maxSize){						
+						var duplicate = false;
+						var existingItem = existingItems[i];
+						// Loop over mergedPicklist
+						for(var j = 0; j < mergedPicklist.results.length; j++){
+							// If the existing item isn't already in the merged picklist
+							if(mergedPicklist.results[j].suggestion === existingItem.suggestion){
+								duplicate = true;
+								break;
+							}
+						}
+						if(!duplicate){
+							mergedPicklist.results.push(existingItems[i]);
+						}
+					}
+				}					
+			}
+
+			// Re-render the picklist
+			if(mergedPicklist){
+				instance.picklist.show(mergedPicklist);
 			}
 		},
 		// Remove the picklist
@@ -434,7 +537,9 @@ ContactDataServices.address = function(options){
 				container.appendChild(heading);
 			}
 			// Insert the container after the input
-			instance.input.parentNode.insertBefore(container, instance.input.nextSibling);
+			//instance.input.parentNode.insertBefore(container, instance.input.nextSibling);
+			// Insert the container after the form
+			instance.input.parentNode.parentNode.insertBefore(container, instance.input.parentNode.nextSibling);
 			return container;
 		},
 		createAddressLine: {
@@ -535,6 +640,9 @@ ContactDataServices.address = function(options){
 	// Return the instance object to the invoker
 	return instance;
 };	
+ContactDataServices.missyEndpoint = {
+	url: "http://teamarachne.azurewebsites.net/api/location"
+};
 // Use this to initiate and track XMLHttpRequests
 ContactDataServices.requestFactory = function(){
 	var request = {
@@ -562,6 +670,30 @@ ContactDataServices.requestFactory = function(){
 			};
 
 			request.currentRequest.send();
+		},
+		post: function(url, data, callback){
+			request.currentRequest = new XMLHttpRequest();
+			request.currentRequest.open('POST', url, true);
+			request.currentRequest.timeout = 5000; // 5 seconds
+			request.currentRequest.setRequestHeader('Content-Type', 'application/json');
+			request.currentRequest.onload = function() {
+				if (request.currentRequest.status >= 200 && request.currentRequest.status < 400) {
+				    // Success!
+				    var data = JSON.parse(request.currentRequest.responseText);
+				    console.log(data);
+				    callback(data);
+				}
+			};
+
+			request.currentRequest.onerror = function() {
+			  // There was a connection error of some sort
+			};
+
+			request.currentRequest.ontimeout = function() {
+			  // There was a connection timeout			  
+			};
+
+			request.currentRequest.send(JSON.stringify(data));
 		}
 	};
 
